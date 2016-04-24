@@ -8,7 +8,7 @@ Title : Graph API
 #Imports
 import pyorient as pdb
 import ast
-
+import wordNetAPI
 
 """
 JUST PASTE THIS FILE NEXT TO YOUR SCRIPT (SAME FOLDER).. THAT'S ALL, CALL ANY
@@ -68,6 +68,7 @@ Note: Make sure that that the node doesn't already exists.(Use thing_count())
 def insert_node(client,thing,list_attributes):
     stmt = ""
     for i in range(len(list_attributes)):
+        list_attributes[i][1] = list_attributes[i][1]+'.'+fetch_class(list_attributes[i][0])
         stmt = stmt + " , " + list_attributes[i][0] + " = '" + list_attributes[i][1] + "' "
     client.command("CREATE VERTEX Thing SET Name = '"+thing+"'" +stmt)
     print thing+' inserted successfully!'
@@ -93,6 +94,7 @@ def update_node(client,thing,list_attributes):
     #Query : UPDATE Thing SET Type = 'Auror',... WHERE Name = 'James Potter'
     stmt = ""
     for i in range(len(list_attributes)):
+        list_attributes[i][1] = list_attributes[i][1]+'.'+fetch_class(list_attributes[i][0])
         stmt = stmt + list_attributes[i][0] + " = '" + list_attributes[i][1] + "'," 
     stmt = str(stmt[:-1])
     client.command("UPDATE Thing SET "+stmt+" WHERE Name = '" + thing +"'")
@@ -127,6 +129,7 @@ Note: No need to check if it exists or not, just insert a new if new information
 def insert_edge(client,thing1,thing2,relatedby,edge_properties):
     stmt = ", "
     for i in range(len(edge_properties)):
+        edge_properties[i][1] = edge_properties[i][1]+'.'+fetch_class(edge_properties[i][0])
         stmt = stmt + edge_properties[i][0] + " = '" + edge_properties[i][1] + "'," 
     stmt = str(stmt[:-1])
     client.command("CREATE EDGE Relation FROM (SELECT FROM Thing WHERE Name = '"+thing1+"') to (SELECT FROM Thing WHERE Name = '"+thing2+"') SET Name = '"+relatedby+"' "+stmt)
@@ -163,6 +166,7 @@ def update_edge(client,thing1,thing2,relatedby,edge_properties):
     stmt = " "
     #UPDATE Relation SET time ='31st July 1980' WHERE Name = 'father' AND in = (SELECT FROM Thing WHERE Name = 'Harry Potter') AND out = (SELECT FROM Thing WHERE Name = 'James Potter')
     for i in range(len(edge_properties)):
+        edge_properties[i][1] = edge_properties[i][1]+'.'+fetch_class(edge_properties[i][0])
         stmt = stmt + edge_properties[i][0] + " = '" + edge_properties[i][1] + "'," 
     stmt = str(stmt[:-1])
     client.command("UPDATE Relation SET "+stmt+" WHERE Name = '"+relatedby+"' "+ "AND out = (SELECT FROM Thing WHERE Name = '"+thing1+"')  AND out = (SELECT FROM Thing WHERE Name = '"+thing2+"')")
