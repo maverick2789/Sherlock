@@ -1,15 +1,9 @@
 GRAPH API Uploaded. 
 
+WORDNET API Uploaded. 
+
+WORD2VEC API Uploaded.
+
+
 Let me know if more functionality needs to be added.
-
-
-WORDNET APIs Coming Soon. 
-
-Features Planning to building in WordNetAPI: 
-
-Fetch top n Parents (for inserting new attribute)
-Fetch n-deep Children (for fetching all closely related things)
-Fetch Synonyms (used for Queries)
-Lowest Common Parent (For finding common grounds between Two Entities)
-Opposite Word (Just in Case)
 
