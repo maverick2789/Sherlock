@@ -1,1 +1,9 @@
-ABCDEFGHIJKLMNOPQRSTUVWXYZ 
+GRAPH API Uploaded. 
+
+WORDNET API Uploaded. 
+
+WORD2VEC API Uploaded.
+
+
+Let me know if more functionality needs to be added.
+
