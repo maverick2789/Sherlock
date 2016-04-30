@@ -32,9 +32,11 @@ def np_chunk(sent):
     tagged=nltk.pos_tag(sent.split())
     result = cp.parse(tagged)
     print 'noun phrase :',result
+    #print type(result)
     result.draw()
     res2=cp2.parse(tagged)
-    print 'now verb phrase:',res2
+    #print 'now verb phrase:',res2
+    #return result,res2
     #res2.draw()
     #f.close() 
     #return sents,result
@@ -46,8 +48,9 @@ def preprocess(text):
     text=re.sub(r'[^\x00-\x7F]+','', text)
     #text=re.sub(ur"[^\w\d'\s-]+",'',text)
     return text
-
-np_chunk('As per the State Forest Report 1999, based on visual and satellite data from IRS-1B, 1C and 1D, the total forest cover of India is 637,293 sq. km.')
+np_chunk('I shot an elephant in my pajamas')
+#np_chunk('Charles Darwin in 1859, published his famous work "Origin of species"')
+#np_chunk('As per the State Forest Report 1999, based on visual and satellite data from IRS-1B, 1C and 1D, the total forest cover of India is 637,293 sq. km.')
 #np_chunk('The pure air the water the animals the plants the microbes and human beings are interlinked in a life sustaining system called the environment.')
 
 #did not work..stanford parser partial code
