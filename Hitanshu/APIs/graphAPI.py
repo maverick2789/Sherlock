@@ -68,7 +68,7 @@ Note: Make sure that that the node doesn't already exists.(Use thing_count())
 def insert_node(client,thing,list_attributes):
     stmt = ""
     for i in range(len(list_attributes)):
-        list_attributes[i][1] = list_attributes[i][1]+'.'+fetch_class(list_attributes[i][0])
+        #list_attributes[i][1] = list_attributes[i][1]+'.'+fetch_class(list_attributes[i][0])
         stmt = stmt + " , " + list_attributes[i][0] + " = '" + list_attributes[i][1] + "' "
     client.command("CREATE VERTEX Thing SET Name = '"+thing+"'" +stmt)
     print thing+' inserted successfully!'
@@ -225,7 +225,7 @@ Ouput Example:
 Note: Only one entry as it contains only one instance.
 """
 def fetch_thing(client,thing):
-    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE Name = '"+thing+"'")
+    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE Name LIKE '%"+thing+"%'")
     response = []
     for i in range(len(output)):
         abc = str(output[i])
@@ -234,7 +234,18 @@ def fetch_thing(client,thing):
         response.append(obj)
     return response
 
-
+def fetch_thing_list(client,thing):
+    response = []    
+    for entity in thing:
+         output = fetch_thing(client,entity)
+         for data in output:         
+             response.append(data)
+    reorder = sorted(response, key = response.count, reverse=True)
+    response = []
+    for i in reorder:
+        if i not in response:
+            response.append(i)
+    return response
 
 
 
@@ -256,7 +267,7 @@ And each entry in the dictonary consists of following:
 
 """
 def fetch_relation(client,relatedby):
-    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE Name = '"+relatedby+"'")
+    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE Name LIKE '%"+relatedby+"%'")
     response = []
     for i in range(len(output)):
         abc = str(output[i])
@@ -265,7 +276,18 @@ def fetch_relation(client,relatedby):
         response.append(obj)
     return response
  
- 
+def fetch_relation_list(client,relatedby):
+    response = []    
+    for entity in relatedby:
+         output = fetch_relation(client,entity)
+         for data in output:         
+             response.append(data)
+    reorder = sorted(response, key = response.count, reverse=True)
+    response = []
+    for i in reorder:
+        if i not in response:
+            response.append(i)
+    return response
  
  
  
@@ -297,14 +319,14 @@ for find_relation(client,'Harry Potter','James Potter') :
 [{'out': 'James Potter', 'Name': 'father', 'in': 'Harry Potter'}]
 """
 def find_relation(client,thing1,thing2):
-    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE in.Name = '"+thing1+"' AND out.Name = '"+thing2+"'")
+    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE in.Name LIKE '%"+thing1+"%' AND out.Name LIKE '%"+thing2+"%'")
     response = []
     for i in range(len(output)):
         abc = str(output[i])
         alpha = abc[abc.index(':{')+1:abc.index('},')+1]
         obj = ast.literal_eval(alpha) 
         response.append(obj)
-    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE in.Name = '"+thing2+"' AND out.Name = '"+thing1+"'")
+    output = client.command("SELECT in.Name,out.Name,* FROM Relation WHERE in.Name LIKE '%"+thing2+"%' AND out.Name LIKE '%"+thing1+"%'")
     for i in range(len(output)):
         abc = str(output[i])
         alpha = abc[abc.index(':{')+1:abc.index('},')+1]
@@ -312,7 +334,19 @@ def find_relation(client,thing1,thing2):
         response.append(obj)
     return response
 
-
+def find_relation_list(client,thing1,thing2):
+    response = []    
+    for entity1 in thing1:
+        for entity2 in thing2:
+            output = find_relation(client,entity1,entity2)
+            for data in output:         
+                response.append(data)
+    reorder = sorted(response, key = response.count, reverse=True)
+    response = []
+    for i in reorder:
+        if i not in response:
+            response.append(i)
+    return response
 
 
 
@@ -347,14 +381,14 @@ for find_thing(client,'Harry Potter','father'):
 [{'out_Relation': ['father'], 'Type': 'Auror', 'Name': 'James Potter'}]
 """
 def find_thing(client,thing1,relation):
-    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE out_Relation IN (SELECT FROM Relation WHERE in.Name = '"+thing1+"' AND Name = '"+relation+"')")
+    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE out_Relation IN (SELECT FROM Relation WHERE in.Name LIKE '%"+thing1+"%' AND Name LIKE '%"+relation+"%')")
     response = []
     for i in range(len(output)):
         abc = str(output[i])
         alpha = abc[abc.index(':{')+1:abc.index('},')+1]
         obj = ast.literal_eval(alpha) 
         response.append(obj)
-    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE in_Relation IN (SELECT FROM Relation WHERE out.Name = '"+thing1+"' AND Name = '"+relation+"')")
+    output = client.command("SELECT in_Relation.Name,out_Relation.Name,* FROM Thing WHERE in_Relation IN (SELECT FROM Relation WHERE out.Name LIKE '%"+thing1+"%' AND Name LIKE '%"+relation+"%')")
     for i in range(len(output)):    
         abc = str(output[i])
         alpha = abc[abc.index(':{')+1:abc.index('},')+1]
@@ -362,6 +396,19 @@ def find_thing(client,thing1,relation):
         response.append(obj)
     return response
 
+def find_thing_list(client,thing1,relation):
+    response = []    
+    for entity1 in thing1:
+        for entity2 in relation:
+            output = find_thing(client,entity1,entity2)
+            for data in output:         
+                response.append(data)
+    reorder = sorted(response, key = response.count, reverse=True)
+    response = []
+    for i in reorder:
+        if i not in response:
+            response.append(i)
+    return response
 
 
 
@@ -391,3 +438,9 @@ print obj[0][obj[0].keys()[1]]
 
 client.db_close()
 """
+
+client = open_db()
+print 'Connected'
+thing = ['watts','steam','engine']
+output = fetch_thing_list(client,thing)
+client.db_close()
